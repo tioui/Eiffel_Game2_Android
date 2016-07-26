@@ -1,0 +1,5 @@
+-- Definition file for Android shared library
+-- Created by Louis Marchand 07/20/2016
+-- License: MIT
+
+APPLICATION : make alias android_main
