@@ -63,26 +63,34 @@ feature {NONE} -- Initialization
 
 	make_music
 		local
-			l_sound:AUDIO_SOUND_WAV_FILE
+			l_sound:AUDIO_SOUND_FILE
 		do
 			audio_library.sources_add
 			music_source := audio_library.last_source_added
-			print_message("Loading the background music")
-			create l_sound.make ("music.wav")
-			if l_sound.is_openable then
-				l_sound.open
-				if l_sound.is_open then
-					print_message("Done...")
-					music_source.queue_sound_infinite_loop (l_sound)
-				else
-					print_message("Done... With Error")
+			create l_sound.make ("intro.ogg")
+			sound_sound(l_sound)
+			if l_sound.is_open then
+				music_source.queue_sound (l_sound)
+			end
+			music_intro := l_sound
+			create l_sound.make ("loop.flac")
+			sound_sound(l_sound)
+			if l_sound.is_open then
+				music_source.queue_sound_infinite_loop (l_sound)
+			end
+			music_loop := l_sound
+		end
+	
+	sound_sound(a_sound:AUDIO_SOUND)
+		do
+			if a_sound.is_openable then
+				a_sound.open
+				if not a_sound.is_open then
 					has_error := True
 				end
 			else
-				print_message("Done... With Error")
 				has_error := True
 			end
-			music := l_sound
 		end
 
 feature -- Access
@@ -96,7 +104,7 @@ feature -- Access
 			window.renderer.clear
 			window.renderer.set_drawing_color (create {GAME_COLOR}.make_rgb (0, 128, 255))
 			maryo.y := 375
-			maryo.x := 200
+			maryo.x := 400
 			game_library.quit_signal_actions.extend (agent on_quit)
 			window.mouse_button_pressed_actions.extend (agent on_mouse_pressed)
 			window.mouse_button_released_actions.extend (agent on_mouse_released)
@@ -124,7 +132,7 @@ feature -- Access
 	music_source:AUDIO_SOURCE
 			-- The source of the background music
 
-	music:AUDIO_SOUND
+	music_intro, music_loop:AUDIO_SOUND
 			-- The background music
 
 feature {NONE} -- Implementation

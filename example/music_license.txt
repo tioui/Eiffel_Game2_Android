@@ -1,5 +1,4 @@
-sound.wav
-Title: Coffee Black
-License: Attribution 3.0 Unported (CC BY 3.0)
-Author: Grim Frenzy
-URL: http://opengameart.org/content/coffee-black
+The intro.ogg and loop.flac files came from the Pingus game (see: http://pingus.seul.org/).
+
+The pingus game is under GPL license (see: GPL.license.txt).
+

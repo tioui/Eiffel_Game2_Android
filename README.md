@@ -1,4 +1,4 @@
-The library has been compiled and has been confirmed to run on Android architecture armeabi, armeabi-v7a and x86.
+The library has been compiled and has been confirmed to run on Android architecture armeabi and armeabi-v7a.
 
 Download the source code of:
 	SDL2
