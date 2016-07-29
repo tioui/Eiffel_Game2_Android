@@ -116,6 +116,6 @@ export ISE_PLATFORM=android-armeabi
 export PATH=$ISE_EIFFEL/studio/spec/$ISE_PLATFORM/bin:$PATH
 ec -config project_android.ecf -finalize -c_compile
 ```
- * It is strangely normal that the compilation failed when creating the executable. This is because even if it create a .so file of the project, EiffelStudio still try to create an executable out of it but it lack two C function to do so (). Those functions will be linked directly on the Android device at run-time.
+ * It is strangely normal that the compilation failed when creating the executable. This is because even if it create a .so file of the project, EiffelStudio still try to create an executable out of it but it lack two C function to do so (init_rt and android_main). Those functions will be linked directly on the Android device at run-time.
  * The important thing is, you shoud have a .so file in EIFGENs/project_android/F_code
  * You shoud compile for every Android architecture that you want to support (armeab, armeabi-v7a, x86, x86_64). Don't forget to backup the .so file for every compilation.
