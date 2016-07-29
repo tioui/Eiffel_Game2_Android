@@ -1,69 +1,121 @@
-The library has been compiled and has been confirmed to run on Android architecture armeabi and armeabi-v7a.
+Android port of the Eiffel Game2 library
+========================================
 
-Download the source code of:
-	SDL2
-	SDL2_image
-	SDL2_ttf
+This is a port of the Eiffel Game2 library that you can find at https://github.com/tioui/Eiffel_Game2 .
 
-Configuring Android compilation
-	# sudo apt-get install openjdk-8-jdk ant libncurses5:i386 libbz2-1.0:i386 libstdc++6:i386 libz1:i386
-	# export PATH=/opt/android-ndk:$PATH
-	# export PATH=/home/louis/Android/Sdk/tools:$PATH
-		-> Use the commande `android` to install API 12
-	# export PATH=/home/louis/Android/Sdk/platform-tools:$PATH
+Note: The library has been compiled and has been confirmed to run on Android architecture armeabi and armeabi-v7a.
 
-Extract the SDL2 source
-	# tar xvfz SDL2-2.0.4.tar.gz
-	# tar xvfz SDL2_image-2.0.1.tar.gz
-	# tar xvfz SDL2_ttf-2.0.14.tar.gz
+Pre-installation
+----------------
+Before installing, you should install the Android NDK, create toolchains for every Android architectures you want to support and generate the Eiffel compilers for the Android architectures. To do this use this link: https://github.com/tioui/Eiffel_Spec/tree/master/android-spec .
 
-Preparing the SDL2 wrapper:
-	# tar xvfz SDL2-2.0.4.tar.gz
-	# cd SDL2-2.0.4/build-scripts
-	# vim androidbuild.sh
-	 	-> Find the line "$ANDROID update project --path $BUILDPATH" (118) and append:
-	 		--target android-12
-	# ./androidbuild.sh org.eiffelgame2 /dev/null
-	 	-> Change the "org.eiffelgame2" for your companie
-	 	-> Does not matter if it fail, it is just for the setup.
-	# cd ../build/org.eiffelgame2
-	# rm -rf jni/src/	# Dummy files
+You should also get the Android .so files of the following C library:
+ * SDL2 (Needed)
+ * SDL2_image (Optionnal: For game_image_file library)
+ * SDL2_ttf (Optionnal: For game_text library)
+ * SDL2_gfx (Optionnal: For game_effects library)
+ * OpenAL (Optionnal: For Audio library)
+ * libsndfile (Optionnal: For audio_sound_file library)
+ * libogg, libvorbis, libvorbis-stream (Optionnal: if you want to use OGG sound files with audio_sound_file library)
+ * libFLAC (Optionnal: if you want to use FLAC sound files with audio_sound_file library)
 
-Linking SDL2_image and SDL2_ttf to the SDL2 wrapper:
-	# ln -s /directory/to/SDL2_image jni/
-	# ln -s /directory/to/SDL2_image/external/libwebp-0.3.0 jni/webp
-	# ln -s /directory/to/SDL2_ttf jni/
-	
-Building .so files:
-	# ndk-build -j$(nproc)
+Installation
+------------
 
-The .so files are in the libs sub-directories.
-	-> Copie the libs directory in the Eiffel Game2 android directory:
-		# cp -rp libs $EIFFEL_LIBRARY/contrib/library/game2/android/
-	-> Create the links to match EiffelStudio Spec (for each spec):
-		# cd $EIFFEL_LIBRARY/contrib/library/game2/android/
-		# ./link_libs.sh
+* Install the Eiffel Game2 library. It should be installed at $EIFFEL_LIBRARY/contrib/library/game2 .
+* Clone or extract the Android port in the $EIFFEL_LIBRARY/contrib/library/game2/android (this README.md file should be at $EIFFEL_LIBRARY/contrib/library/game2/android/README.md)
+* Create the $EIFFEL_LIBRARY/contrib/library/game2/android/libs/armeabi folder
+* Copy the C libraries .so files that you get in the pre-installation in the $EIFFEL_LIBRARY/contrib/library/game2/android/libs/armeabi folder
+* Redo the last two steps for every Android architecture you want to support (armeabi, armeabi-v7a, x86, x86_64)
+* Execute the link_libs.sh script:
 
-Compiling the Additions C files:
-	-> For each platform (ex: android-14-arm, android-14-x86, etc.)
-		-> Be sure to have set the environment variables $ISE_EIFFEL and $EIFFEL_LIBRARY (generally the same value than $ISE_EIFFEL)
-		# export ISE_PLATFORM=android-14-arm
-		# export PATH=$ISE_EIFFEL/studio/spec/$ISE_PLATFORM/bin:$PATH
-		# ./compile_c_additions.sh
+```bash
+cd $EIFFEL_LIBRARY/contrib/library/game2/android   # The $EIFFEL_LIBRARY must be set
+./link_libs
+```
 
-To compile a project:
-	-> Create a new .ecf file for your Android version of the program (or create another target)
-	-> Change the Game2 library .ecf files whith those in the android/configs directory
-	-> Add the Android definition files to the Android target of your application .ecf file:
+ * Now, there is some C files to precompile. You have to use the compile_c_additions.sh script in the Clib directory like this:
+
+```bash
+cd $EIFFEL_LIBRARY/contrib/library/game2/android/Clib   # The $EIFFEL_LIBRARY must be set
+export ISE_PLATFORM=android-armeabi
+export PATH=$ISE_EIFFEL/studio/spec/$ISE_PLATFORM/bin:$PATH
+./compile_c_additions.sh
+```
+
+ * You shoud do those last commands for every Android architecture you want to support (armeabi, armeabi-v7a, x86, x86_64)
+ * Your Android Eiffel Game2 library is not installed
+
+Compiling with the Eiffel Game2 Android library
+-----------------------------------------------
+
+ * First, you shoud used a project that is working on PC. Creating a new project entirely for Android is asking for a lots of pain and suffering.
+ * Copy the .ecf file of your project (for example, copy project.ecf to project_android.ecf)
+ * Edit the .ecf for android (in our example, project_android.ecf)
+ * Replace every ".ecf" library from the Eiffel Game2 library to the ones in $EIFFEL_LIBRARY/contrib/library/game2/android/libraries (if it exists)
+ * Add a line to indicate to the Eiffel compiler to create a .so file instead of an executable binary:
+```XML
+<setting name="shared_library_definition" value="$EIFFEL_LIBRARY\contrib\library\game2\android\android.def"/>
+```
+ * Note that, if your project root feature is not {APPLICATION}.make, you should change the android.def file accordignly. If you don't want to modify the original, you can copy it and change the path in the 'setting' XML tags of the .ecf file.
+ * For an example, here is the .ecf file of a standard Eiffel Game2 project:
+```XML
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-15-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-15-0 http://www.eiffel.com/developers/xml/configuration-1-15-0.xsd" name="project" uuid="46FD29F2-0485-4A58-BDC7-E749CED4C3EE">
+	<target name="project">
+		<root class="APPLICATION" feature="make"/>
+		<option is_obsolete_routine_type="true" void_safety="all" syntax="standard">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
+		<library name="audio_3d" location="$ISE_LIBRARY\contrib\library\game2\audio\audio-safe.ecf"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base-safe.ecf"/>
+		<library name="eiffel_game" location="$EIFFEL_LIBRARY\contrib\library\game2\game_core\game_core-safe.ecf"/>
+		<library name="game_effects" location="$ISE_LIBRARY\contrib\library\game2\game_effects\game_effects-safe.ecf"/>
+		<library name="audio_sound_file" location="$ISE_LIBRARY\contrib\library\game2\audio_sound_file\audio_sound_file-safe.ecf"/>
+		<library name="game_image_file" location="$EIFFEL_LIBRARY\contrib\library\game2\game_image_file\game_image_file-safe.ecf"/>
+		<library name="game_text" location="$ISE_LIBRARY\contrib\library\game2\game_text\game_text-safe.ecf"/>
+		<cluster name="project" location=".\" recursive="true">
+			<file_rule>
+				<exclude>/EIFGENs$</exclude>
+			</file_rule>
+		</cluster>
+	</target>
+</system>
+```
+ * Now, here is the same project for Android:
+```XML
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-13-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-13-0 http://www.eiffel.com/developers/xml/configuration-1-13-0.xsd" name="project_android" uuid="46FD29F2-0485-4A58-BDC7-E749CED4C3EE">
+	<target name="project_android">
+		<root class="APPLICATION" feature="make"/>
+		<option void_safety="all" syntax="standard">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
 		<setting name="shared_library_definition" value="$EIFFEL_LIBRARY\contrib\library\game2\android\android.def"/>
-	-> If your application root feature is different than {APPLICATION}.`make', change the definition file.
-	-> Compile the Android target with your Android spec
-		-> The C compilation of the application will fail with:
-				SDL_android_main.c:61: error: undefined reference to 'init_rt'
-				SDL_android_main.c:62: error: undefined reference to 'android_main'
-			-> It is ok because we don't need the application, we only need the shared library of the project.
-			-> If your EIFGENs/**/F_code contain a .so file, the compilation succeeded.
-	-> Copie the generated .so file in the Android project libs sub-directory and name it libmain.so .
-	-> To generate an apk file and put it on an android device, you can use "ant":
-		# ant debug install
-	
+		<library name="base" location="$ISE_LIBRARY\library\base\base-safe.ecf"/>
+		<library name="game_android" location="$EIFFEL_LIBRARY\contrib\library\game2\android\game_android\game_android-safe.ecf"/>
+		<library name="game_core" location="$EIFFEL_LIBRARY\contrib\library\game2\android\libraries\game_core-safe.ecf"/>
+		<library name="audio" location="$EIFFEL_LIBRARY\contrib\library\game2\android\libraries\audio-safe.ecf"/>
+		<library name="audio_sound_file" location="$EIFFEL_LIBRARY\contrib\library\game2\android\libraries\audio_sound_file-safe.ecf"/>
+		<library name="game_effects" location="$EIFFEL_LIBRARY\contrib\library\game2\android\libraries\game_effects-safe.ecf"/>
+		<library name="game_image_file" location="$EIFFEL_LIBRARY\contrib\library\game2\android\libraries\game_image_file-safe.ecf"/>
+		<library name="game_text" location="$EIFFEL_LIBRARY\contrib\library\game2\android\libraries\game_text-safe.ecf"/>
+		<cluster name="project" location=".\" recursive="true">
+			<file_rule>
+				<exclude>/EIFGENs$</exclude>
+			</file_rule>
+		</cluster>
+	</target>
+</system>
+```
+ * Now to compile the project for Android, you can used the EiffelStudio Launchers that you create for Android. You can also used those command lines:
+```bash
+cd directory/of/the/project
+export ISE_PLATFORM=android-armeabi
+export PATH=$ISE_EIFFEL/studio/spec/$ISE_PLATFORM/bin:$PATH
+ec -config project_android.ecf -finalize -c_compile
+```
+ * It is strangely normal that the compilation failed when creating the executable. This is because even if it create a .so file of the project, EiffelStudio still try to create an executable out of it but it lack two C function to do so (). Those functions will be linked directly on the Android device at run-time.
+ * The important thing is, you shoud have a .so file in EIFGENs/project_android/F_code
+ * You shoud compile for every Android architecture that you want to support (armeab, armeabi-v7a, x86, x86_64). Don't forget to backup the .so file for every compilation.
