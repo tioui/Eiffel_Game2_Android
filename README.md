@@ -19,15 +19,19 @@ You should also get the Android .so files of the following C library:
  * libogg, libvorbis, libvorbis-stream (Optionnal: if you want to use OGG sound files with audio_sound_file library)
  * libFLAC (Optionnal: if you want to use FLAC sound files with audio_sound_file library)
 
+You can generate those libraries yourself or used the ones that I have already compiled. You can find there here: https://github.com/tioui/Eiffel_Game2_Android/raw/Builds/C_libraries.tar.bz2 . Just extract and put the "libs" directory in the Eiffel Game2 Android directory.
+
 Installation
 ------------
 
 * Install the Eiffel Game2 library. It should be installed at $EIFFEL_LIBRARY/contrib/library/game2 .
 * Clone or extract the Android port in the $EIFFEL_LIBRARY/contrib/library/game2/android (this README.md file should be at $EIFFEL_LIBRARY/contrib/library/game2/android/README.md)
-* Create the $EIFFEL_LIBRARY/contrib/library/game2/android/libs/armeabi folder
-* Copy the C libraries .so files that you get in the pre-installation in the $EIFFEL_LIBRARY/contrib/library/game2/android/libs/armeabi folder
-* Redo the last two steps for every Android architecture you want to support (armeabi, armeabi-v7a, x86, x86_64)
-* Execute the link_libs.sh script:
+* If you used the precompiled C libraries (C_libraries.tar.bz2), just extract and copy the "libs" directory in $EIFFEL_LIBRARY/contrib/library/game2/android/.
+* If you generate the C libraries ".so" yourself:
+  * Create the $EIFFEL_LIBRARY/contrib/library/game2/android/libs/armeabi folder
+  * Copy the C libraries .so files that you get in the pre-installation in the $EIFFEL_LIBRARY/contrib/library/game2/android/libs/armeabi folder
+  * Redo the last two steps for every Android architecture you want to support (armeabi, armeabi-v7a, x86, x86_64)
+  * Execute the link_libs.sh script:
 
 ```bash
 cd $EIFFEL_LIBRARY/contrib/library/game2/android   # The $EIFFEL_LIBRARY must be set
