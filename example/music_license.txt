@@ -1,4 +1,0 @@
-The intro.ogg and loop.flac files came from the Pingus game (see: http://pingus.seul.org/).
-
-The pingus game is under GPL license (see: GPL.license.txt).
-
