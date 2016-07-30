@@ -119,3 +119,73 @@ ec -config project_android.ecf -finalize -c_compile
  * It is strangely normal that the compilation failed when creating the executable. This is because even if it create a .so file of the project, EiffelStudio still try to create an executable out of it but it lack two C functions to do so (init_rt and android_main). Those functions will be linked directly on the Android device at run-time.
  * The important thing is, you shoud have a .so file in EIFGENs/project_android/F_code
  * You shoud compile for every Android architecture that you want to support (armeab, armeabi-v7a, x86, x86_64). Don't forget to backup the .so file for every compilation.
+
+Creating the Android Project
+----------------------------
+
+You can create an Android project from AndroidStudio and copy every files and set every configuration manually if you want.
+But if you are feeling lazy, the Android Eiffel Game2 directory contain a script to create a basic Android Project wit the correct files and configurations already set. Here is how to use it
+
+ * Be sure that you have the Android Sdk tools directory in your PATH
+```bash
+export PATH=~/Android/Sdk/tools:$PATH
+```
+ * The script must be used with the name of your application package (including your companie and the destination directory. Note that the destination directory will be created and must not already exists. For example:
+```bash
+cd $EIFFEL_LIBRARY/contrib/library/game2/android
+./android_build_project.sh org.eiffelgame2.example ~/example_apk
+```
+ * Note: In the libs directory of destination folder, be sure to remove every Android architecture that you don't want to support.
+ * After the creation, the Android project does not contain your game. you must take the .so file that you have generate before dans put it in the correct libs subdirectory. The .so of your Eiffel program should be called libmain.so.
+ * For example, before putting the Eiffel program:
+```bash
+-> cd ~/example_apk
+-> ls libs/**
+libs/armeabi:
+libFLAC.so  libopenal.so    libSDL2_image.so  libSDL2_ttf.so  libvorbis.so
+libogg.so   libSDL2_gfx.so  libSDL2.so        libsndfile.so   libvorbis-stream.so
+
+libs/armeabi-v7a:
+libFLAC.so  libopenal.so    libSDL2_image.so  libSDL2_ttf.so  libvorbis.so
+libogg.so   libSDL2_gfx.so  libSDL2.so        libsndfile.so   libvorbis-stream.so
+
+libs/x86:
+libFLAC.so  libopenal.so    libSDL2_image.so  libSDL2_ttf.so  libvorbis.so
+libogg.so   libSDL2_gfx.so  libSDL2.so        libsndfile.so   libvorbis-stream.so
+
+libs/x86_64:
+libFLAC.so  libopenal.so    libSDL2_image.so  libSDL2_ttf.so  libvorbis.so
+libogg.so   libSDL2_gfx.so  libSDL2.so        libsndfile.so   libvorbis-stream.so
+```
+ * After the copy of the Eiffel generated .so files:
+```bash
+-> cd ~/example_apk
+-> ls libs/**
+libs/armeabi:
+libFLAC.so  libogg.so     libSDL2_gfx.so    libSDL2.so      libsndfile.so  libvorbis-stream.so
+libmain.so  libopenal.so  libSDL2_image.so  libSDL2_ttf.so  libvorbis.so
+
+libs/armeabi-v7a:
+libFLAC.so  libogg.so     libSDL2_gfx.so    libSDL2.so      libsndfile.so  libvorbis-stream.so
+libmain.so  libopenal.so  libSDL2_image.so  libSDL2_ttf.so  libvorbis.so
+
+libs/x86:
+libFLAC.so  libogg.so     libSDL2_gfx.so    libSDL2.so      libsndfile.so  libvorbis-stream.so
+libmain.so  libopenal.so  libSDL2_image.so  libSDL2_ttf.so  libvorbis.so
+
+libs/x86_64:
+libFLAC.so  libogg.so     libSDL2_gfx.so    libSDL2.so      libsndfile.so  libvorbis-stream.so
+libmain.so  libopenal.so  libSDL2_image.so  libSDL2_ttf.so  libvorbis.so
+```
+ * To easily launch the application, you can use ant in the Android project folder (be sure to only have one device/emulator connected):
+```bash
+ant debug install
+```
+ * You should also be able to import the project in AndroidStudio (be carefull, AndroidStudio will change the project structure)
+
+More to know
+------------
+ * Your ressources (images, sound, font, etc.) should be put in the "assets" directory of the Android project directory.
+ * To directly read a file from the "assets" directory, you cannot use the Eiffel {RAW_FILE} or {PLAIN_TEXT_FILE} because those files are always zipped in the APK file. You can use the class {GAME_FILE} of the 'game_shared' library to read in the "assets" directory. Also, those files are read only.
+ * There is a little library exclusively for Android. It is in $EIFFEL_LIBRARY/contrib/library/game2/android/game_android . I give logging facility and a way to know where to store private and public files.
+ * You cannot read from a plain text file directly from the "assets" directory. The easyest way to do it is to copy the file (byte per byte) from the "assets" directory using a {GAME_FILE} and put it in your application's private directory. Then, you can use a {PLAIN_TEXT_FILE} to open and read (and write if you like) those plain text files.
