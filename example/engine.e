@@ -171,7 +171,7 @@ feature {NONE} -- Implementation
 			window.renderer.present		-- Update modification in the screen
 		end
 
-	on_mouse_pressed(a_timestamp:NATURAL_32; a_mouse_state:GAME_MOUSE_BUTTON_PRESSED_STATE; a_nb_clicks:NATURAL_8)
+	on_mouse_pressed(a_timestamp:NATURAL_32; a_mouse_state:GAME_MOUSE_BUTTON_PRESS_EVENT; a_nb_clicks:NATURAL_8)
 			-- Action when a mouse button is pressed on the `window'
 		do
 			if a_mouse_state.is_left_button_pressed then
@@ -185,7 +185,7 @@ feature {NONE} -- Implementation
 			end
 		end
 
-	on_mouse_released(a_timestamp:NATURAL_32; a_mouse_state:GAME_MOUSE_BUTTON_RELEASED_STATE; a_nb_clicks:NATURAL_8)
+	on_mouse_released(a_timestamp:NATURAL_32; a_mouse_state:GAME_MOUSE_BUTTON_RELEASE_EVENT; a_nb_clicks:NATURAL_8)
 			-- Action when a mouse button is released on the `window'
 		do
 			if a_mouse_state.is_left_button_released then

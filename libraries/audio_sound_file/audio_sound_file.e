@@ -71,6 +71,19 @@ feature --Access
 			has_ressource_error := has_error
 		end
 
+	close
+			-- <Precursor>
+		local
+			l_error:INTEGER
+		do
+			file_info.memory_free
+			l_error:={AUDIO_SND_FILES_EXTERNAL}.sf_close(snd_file_ptr)
+			create snd_file_ptr
+			create file_info
+			is_open := False
+		end
+
+
 	channel_count:INTEGER
 			-- Get the channel number of the sound (1=mono, 2=stereo, etc.).
 		do
@@ -100,7 +113,6 @@ feature --Access
 		do
 			Result:=({AUDIO_SND_FILES_EXTERNAL}.get_sf_info_struct_seekable(file_info)/=0)
 		end
-
 	restart
 			-- Restart the sound to the beginning.
 		local
@@ -108,13 +120,47 @@ feature --Access
 		do
 			if is_seekable then
 				l_error:={AUDIO_SND_FILES_EXTERNAL}.SF_seek(snd_file_ptr,0,{AUDIO_SND_FILES_EXTERNAL}.Seek_set)
-				check l_error/=-1 end
+				is_finished := False
+				if l_error = -1 then
+					put_error (
+								"Cannot seek in the audio file.",
+								"The system tried to seek at the beginning of file " + filename + "but it failed."
+							)
+				end
 			else
 				dispose
 				open_from_file(filename)
+				is_finished := False
 			end
-
 		end
+
+	sample_seek(a_frame_number:INTEGER_64)
+			-- <Precursor>
+		local
+			l_error:INTEGER_64
+		do
+			l_error:={AUDIO_SND_FILES_EXTERNAL}.SF_seek(snd_file_ptr, a_frame_number - 1, {AUDIO_SND_FILES_EXTERNAL}.Seek_set)
+			is_finished := False
+			if l_error = -1 then
+				put_error (
+							"Cannot seek in the audio file.",
+							"The system tried to seek at the frame " + a_frame_number.out + " of file " + filename + "but it failed."
+						)
+			end
+		end
+
+	sample_position:INTEGER_64
+			-- <Precursor>
+		do
+			Result := {AUDIO_SND_FILES_EXTERNAL}.SF_seek(snd_file_ptr, 0, {AUDIO_SND_FILES_EXTERNAL}.Seek_cur) + 1
+		end
+
+	sample_count:INTEGER_64
+			-- <Precursor>
+		do
+			Result:={AUDIO_SND_FILES_EXTERNAL}.get_sf_info_struct_frames(file_info)
+		end
+
 
 feature {NONE} -- Implementation
 

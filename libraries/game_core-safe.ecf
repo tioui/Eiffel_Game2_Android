@@ -51,7 +51,7 @@
 			</file_rule>
 			<cluster name="input" location="$EIFFEL_LIBRARY/contrib/library/game2/game_core/input/"/>
 			<cluster name="gl" location="$EIFFEL_LIBRARY/contrib/library/game2/game_core/gl/"/>
-			<cluster name="event" location="$EIFFEL_LIBRARY/contrib/library/game2/game_core/event/"/>
+			<cluster name="event" location="$EIFFEL_LIBRARY/contrib/library/game2/game_core/event/" recursive="true"/>
 			<cluster name="graphic" location="$EIFFEL_LIBRARY/contrib/library/game2/game_core/graphic/"/>
 			<cluster name="haptic" location="$EIFFEL_LIBRARY/contrib/library/game2/game_core/haptic/"/>
 			<cluster name="implementation" location="$EIFFEL_LIBRARY/contrib/library/game2/game_core/implementation/" recursive="true"/>

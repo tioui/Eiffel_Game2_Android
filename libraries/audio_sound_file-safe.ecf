@@ -45,6 +45,8 @@
 				<exclude>/Clib$</exclude>
 				<exclude>/spec$</exclude>
 				<exclude>/audio_sound_file.e$</exclude>
+				<exclude>/windows$</exclude>
+				<exclude>implementation/windows$</exclude>
 			</file_rule>
 		</cluster>
 		<cluster name="audio_sound_file_android" location="audio_sound_file/" recursive="true"/>
